@@ -1,0 +1,6 @@
+People with diabetes in data: 26%
+
+Logistic Regression: accuracy 76.7%, ROC-AUC 0.744
+Random Forest: accuracy 74.5%, ROC-AUC 0.713
+
+Logistic Regression is used in the apps (easy to explain, and it runs in the browser).

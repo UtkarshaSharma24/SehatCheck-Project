@@ -1,0 +1,209 @@
+{
+ "symptoms": {
+  "fever": "Fever",
+  "highfever": "High fever (above 39°C)",
+  "chills": "Chills / shivering",
+  "fatigue": "Tiredness",
+  "bodyache": "Body ache",
+  "appetite": "Loss of appetite",
+  "pale": "Pale skin",
+  "headache": "Headache",
+  "photo": "Light hurts my eyes",
+  "eyepain": "Pain behind the eyes",
+  "sore": "Sore throat",
+  "runny": "Runny nose",
+  "sneeze": "Sneezing",
+  "itcheyes": "Itchy eyes",
+  "smell": "Loss of smell or taste",
+  "dizzy": "Dizziness",
+  "cough": "Cough",
+  "breath": "Short of breath",
+  "chest": "Chest pain",
+  "nausea": "Nausea",
+  "vomit": "Vomiting",
+  "diarrhea": "Loose motions",
+  "abdpain": "Stomach pain",
+  "burning": "Burning while urinating",
+  "rash": "Skin rash",
+  "jointpain": "Joint pain"
+ },
+ "floor": 0.02,
+ "diseases": {
+  "Common cold": {
+   "prior": 0.25,
+   "tip": "Usually settles in about a week. Rest, fluids, warm salt-water gargles.",
+   "p": {
+    "fever": 0.3,
+    "cough": 0.6,
+    "sore": 0.6,
+    "runny": 0.85,
+    "sneeze": 0.7,
+    "headache": 0.3,
+    "bodyache": 0.3,
+    "fatigue": 0.4,
+    "chills": 0.1
+   }
+  },
+  "Influenza (flu)": {
+   "prior": 0.12,
+   "tip": "Rest, fluids and paracetamol for fever. See a doctor if breathing gets harder.",
+   "p": {
+    "fever": 0.85,
+    "highfever": 0.4,
+    "cough": 0.75,
+    "sore": 0.4,
+    "runny": 0.4,
+    "headache": 0.6,
+    "bodyache": 0.85,
+    "fatigue": 0.85,
+    "chills": 0.7,
+    "nausea": 0.15,
+    "appetite": 0.5
+   }
+  },
+  "COVID-19": {
+   "prior": 0.1,
+   "tip": "A test confirms it. Stay home, wear a mask around others, watch your breathing.",
+   "p": {
+    "fever": 0.6,
+    "cough": 0.65,
+    "sore": 0.35,
+    "headache": 0.45,
+    "bodyache": 0.5,
+    "fatigue": 0.7,
+    "smell": 0.5,
+    "breath": 0.2,
+    "chills": 0.35,
+    "diarrhea": 0.1,
+    "runny": 0.3
+   }
+  },
+  "Dengue": {
+   "prior": 0.06,
+   "tip": "Needs a blood test (NS1 / platelet count). Drink plenty of fluids and avoid aspirin or ibuprofen.",
+   "p": {
+    "fever": 0.95,
+    "highfever": 0.7,
+    "headache": 0.75,
+    "bodyache": 0.8,
+    "jointpain": 0.75,
+    "eyepain": 0.6,
+    "rash": 0.4,
+    "nausea": 0.5,
+    "vomit": 0.35,
+    "fatigue": 0.7,
+    "chills": 0.3,
+    "abdpain": 0.2
+   }
+  },
+  "Malaria": {
+   "prior": 0.05,
+   "tip": "Needs a blood smear or rapid test soon. Fever that comes in cycles with chills is a clue.",
+   "p": {
+    "fever": 0.95,
+    "highfever": 0.6,
+    "chills": 0.9,
+    "headache": 0.6,
+    "bodyache": 0.6,
+    "fatigue": 0.7,
+    "nausea": 0.4,
+    "vomit": 0.3,
+    "jointpain": 0.3
+   }
+  },
+  "Typhoid": {
+   "prior": 0.04,
+   "tip": "Needs a blood culture or Widal test. Drink only safe water and see a doctor.",
+   "p": {
+    "fever": 0.9,
+    "highfever": 0.5,
+    "headache": 0.6,
+    "abdpain": 0.6,
+    "fatigue": 0.7,
+    "appetite": 0.7,
+    "diarrhea": 0.3,
+    "nausea": 0.4,
+    "rash": 0.15,
+    "bodyache": 0.4
+   }
+  },
+  "Migraine": {
+   "prior": 0.1,
+   "tip": "Rest in a dark, quiet room and drink water. See a doctor if attacks are frequent.",
+   "p": {
+    "headache": 0.98,
+    "photo": 0.8,
+    "nausea": 0.6,
+    "vomit": 0.3,
+    "dizzy": 0.3,
+    "eyepain": 0.25,
+    "fatigue": 0.3
+   }
+  },
+  "Stomach infection": {
+   "prior": 0.12,
+   "tip": "Take ORS and fluids often. See a doctor if there is blood in stool or no urine for 8 hours.",
+   "p": {
+    "nausea": 0.8,
+    "vomit": 0.7,
+    "diarrhea": 0.9,
+    "abdpain": 0.8,
+    "fever": 0.35,
+    "fatigue": 0.4,
+    "headache": 0.2,
+    "bodyache": 0.2,
+    "appetite": 0.6
+   }
+  },
+  "Allergic rhinitis": {
+   "prior": 0.15,
+   "tip": "Avoid dust and pollen triggers. An antihistamine from a pharmacist may help.",
+   "p": {
+    "sneeze": 0.9,
+    "runny": 0.85,
+    "itcheyes": 0.8,
+    "cough": 0.2,
+    "headache": 0.2,
+    "sore": 0.2,
+    "fatigue": 0.15
+   }
+  },
+  "Pneumonia": {
+   "prior": 0.03,
+   "tip": "Needs a doctor and usually a chest X-ray. Do not wait if breathing is difficult.",
+   "p": {
+    "fever": 0.8,
+    "highfever": 0.35,
+    "cough": 0.9,
+    "breath": 0.75,
+    "chest": 0.55,
+    "fatigue": 0.6,
+    "chills": 0.5,
+    "bodyache": 0.3
+   }
+  },
+  "Urinary tract infection": {
+   "prior": 0.06,
+   "tip": "Drink water and see a doctor for a urine test; it usually needs antibiotics.",
+   "p": {
+    "burning": 0.95,
+    "abdpain": 0.4,
+    "fever": 0.25,
+    "nausea": 0.1,
+    "fatigue": 0.2
+   }
+  },
+  "Anaemia": {
+   "prior": 0.05,
+   "tip": "A blood test (haemoglobin) will confirm. Iron-rich food helps, but get it checked.",
+   "p": {
+    "fatigue": 0.9,
+    "dizzy": 0.7,
+    "pale": 0.6,
+    "breath": 0.3,
+    "headache": 0.3,
+    "appetite": 0.2
+   }
+  }
+ }
+}

@@ -1,0 +1,37 @@
+Accuracy on test data: 91.2%
+
+                         precision    recall  f1-score   support
+
+      Allergic rhinitis       0.94      0.89      0.92       133
+                Anaemia       0.96      0.93      0.95        46
+               COVID-19       0.90      0.64      0.75        86
+            Common cold       0.88      0.95      0.91       224
+                 Dengue       0.94      0.90      0.92        51
+        Influenza (flu)       0.85      0.94      0.89       107
+                Malaria       0.94      0.85      0.89        39
+               Migraine       0.98      0.98      0.98        86
+              Pneumonia       0.87      0.93      0.90        29
+      Stomach infection       0.95      0.99      0.97       107
+                Typhoid       0.80      0.89      0.84        36
+Urinary tract infection       0.98      0.96      0.97        56
+
+               accuracy                           0.91      1000
+              macro avg       0.92      0.90      0.91      1000
+           weighted avg       0.91      0.91      0.91      1000
+
+Confusion matrix (rows = real, columns = predicted)
+                         Allerg  Anaemi  COVID-  Common  ...  Pneumo  Stomac  Typhoi  Urinar
+Allergic rhinitis           119       0       0      13  ...       0       0       0       0
+Anaemia                       0      43       0       0  ...       0       1       1       0
+COVID-19                      0       1      55      13  ...       4       0       1       0
+Common cold                   7       0       3     212  ...       0       0       0       0
+Dengue                        0       0       0       0  ...       0       1       2       0
+Influenza (flu)               0       0       2       2  ...       0       0       2       0
+Malaria                       0       0       1       0  ...       0       0       0       1
+Migraine                      0       0       0       1  ...       0       0       0       0
+Pneumonia                     0       0       0       0  ...      27       0       0       0
+Stomach infection             0       0       0       0  ...       0     106       1       0
+Typhoid                       0       0       0       0  ...       0       4      32       0
+Urinary tract infection       0       1       0       0  ...       0       0       1      54
+
+[12 rows x 12 columns]

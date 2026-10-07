@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SehatCheck – AI symptom checker</title>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F6FB;--card:#fff;--ink:#14213D;--mute:#5E6B85;--line:#DCE3EF;--brand:#1456C4;--soft:#EAF1FD;--on:#fff;--ok:#157F4F;--okbg:#E4F5EC;--mid:#8A5A00;--midbg:#FFF2D6;--bad:#B3261E;--badbg:#FDE7E5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1626;--card:#16213A;--ink:#E8EEFB;--mute:#9AA8C4;--line:#2A3857;--brand:#6EA0FF;--soft:#1C2C52;--on:#0E1626;--ok:#6FD6A0;--okbg:#14382A;--mid:#F2C46B;--midbg:#3D3012;--bad:#FF9188;--badbg:#401D1B}}
+:root[data-theme="dark"]{--bg:#0E1626;--card:#16213A;--ink:#E8EEFB;--mute:#9AA8C4;--line:#2A3857;--brand:#6EA0FF;--soft:#1C2C52;--on:#0E1626;--ok:#6FD6A0;--okbg:#14382A;--mid:#F2C46B;--midbg:#3D3012;--bad:#FF9188;--badbg:#401D1B}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.55 "Plus Jakarta Sans",system-ui,sans-serif}
+.nav{background:var(--card);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+.brand small{display:block;font-weight:500;font-size:12px;color:var(--mute)}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--brand);display:grid;place-items:center}
+.pill{font-size:13px;color:var(--ok);background:var(--okbg);padding:5px 12px;border-radius:999px;font-weight:700}
+.wrap{max-width:860px;margin:0 auto;padding:22px 16px 48px}
+.steps{list-style:none;display:flex;gap:8px;padding:0;margin:0 0 18px}
+.steps li{flex:1;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mute);font-weight:700}
+.steps li b{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;flex:none}
+.steps li.on{color:var(--ink)}.steps li.on b{background:var(--brand);border-color:var(--brand);color:var(--on)}
+.steps li.done b{background:var(--ok);border-color:var(--ok);color:var(--card)}
+@media(max-width:560px){.steps li span{display:none}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+h1{font-size:clamp(24px,4vw,32px);margin:0 0 6px;font-weight:800;line-height:1.2}
+h2{font-size:18px;margin:22px 0 10px;font-weight:800}
+.lead{color:var(--mute);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+label{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700;color:var(--mute)}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px}
+input:focus,select:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin:8px 0 0}
+.btn{font:800 15px "Plus Jakarta Sans",sans-serif;padding:12px 22px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--on)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.bar{display:flex;gap:10px;justify-content:space-between;margin-top:22px;flex-wrap:wrap}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 15px "Plus Jakarta Sans",sans-serif;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--soft);border-color:var(--brand);color:var(--brand)}
+.chip[aria-pressed="true"]::before{content:"✓ "}
+.gh{font-size:14px;color:var(--mute);margin:18px 0 8px;font-weight:700}
+.tray{background:var(--soft);border-radius:12px;padding:12px 14px;margin-top:20px}
+.tray p{margin:0 0 8px;font-size:14px;font-weight:700}
+.tag{font:600 13px "Plus Jakarta Sans",sans-serif;background:var(--card);border:1px solid var(--brand);color:var(--brand);border-radius:8px;padding:4px 9px;margin:0 6px 6px 0;cursor:pointer}
+.who{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--mute);border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}
+.who b{color:var(--ink)}
+.triage{border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.triage .ic{font-size:26px;line-height:1}
+.triage h3{margin:0 0 2px;font-size:18px;font-weight:800}
+.triage p{margin:0;font-size:15px}
+.t-ok{background:var(--okbg);color:var(--ok)}.t-mid{background:var(--midbg);color:var(--mid)}.t-bad{background:var(--badbg);color:var(--bad)}
+.triage p,.triage h3{color:inherit}
+.cond{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.cond.first{border:2px solid var(--brand)}
+.ct{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.cn{font-weight:800;font-size:17px}
+.cp{font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums}
+.tr{height:8px;background:var(--soft);border-radius:5px;margin:8px 0;overflow:hidden}
+.tr i{display:block;height:100%;background:var(--brand);border-radius:5px;transition:width .5s}
+.cond p{margin:4px 0 0;font-size:15px;color:var(--mute)}
+.badge{font-size:12px;font-weight:800;background:var(--soft);color:var(--brand);border-radius:6px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+details{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-weight:800}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+td,th{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+.fine{font-size:13px;color:var(--mute);margin-top:18px}
+@media print{.nav,.steps,.bar,details{display:none!important}.panel{border:0}}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{font:800 15px "Plus Jakarta Sans",sans-serif;padding:10px 18px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--mute);cursor:pointer}
+.tab.on{background:var(--brand);border-color:var(--brand);color:var(--on)}
+.big{font:800 44px/1 "Plus Jakarta Sans",sans-serif;margin:14px 0 4px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:18px}
+.metrics div{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--mute);font-weight:700}
+.metrics b{display:block;font-size:24px;color:var(--ink)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="brand"><span class="logo"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M8 2h4v6h6v4h-6v6H8v-6H2V8h6z" fill="#fff"/></svg></span><div>SehatCheck<small>AI symptom checker</small></div></div>
+  <span class="pill">Private: runs on your device</span>
+</nav>
+<main class="wrap">
+  <div class="tabs"><button class="tab on" id="t1" type="button">Symptom checker</button><button class="tab" id="t2" type="button">Diabetes risk check</button></div>
+  <ol class="steps" id="steps"><li class="on"><b>1</b><span>About you</span></li><li><b>2</b><span>Symptoms</span></li><li><b>3</b><span>Your report</span></li></ol>
+
+  <section class="panel" id="s1">
+    <h1>Let's start with the basics</h1>
+    <p class="lead">This helps the checker give safer advice. Nothing is saved or sent anywhere.</p>
+    <div class="grid">
+      <label>Name (optional)<input id="name" placeholder="e.g. Aman" maxlength="40"></label>
+      <label>Age (years)<input id="age" type="number" min="0" max="110" inputmode="numeric" placeholder="e.g. 21"></label>
+      <label>Sex<select id="sex"><option>Male</option><option>Female</option><option>Other</option></select></label>
+      <label>Symptoms started<select id="dur"><option value="1">Today</option><option value="3" selected>2–3 days ago</option><option value="6">4–6 days ago</option><option value="10">A week or more ago</option></select></label>
+    </div>
+    <p class="err" id="err" role="alert"></p>
+    <div class="bar"><span></span><button class="btn pri" id="n1" type="button">Continue</button></div>
+  </section>
+
+  <section class="panel" id="s2" hidden>
+    <h1>What are you feeling?</h1>
+    <p class="lead">Tap every symptom that applies. Pick at least 2.</p>
+    <label>Search<input id="q" type="search" placeholder="Type a symptom, e.g. cough"></label>
+    <div id="groups"></div>
+    <div class="tray"><p><span id="count">0</span> selected</p><div id="tray"></div></div>
+    <p class="fine" id="hint" role="status"></p>
+    <div class="bar"><button class="btn" id="b2" type="button">Back</button><button class="btn pri" id="n2" type="button" disabled>See my report</button></div>
+  </section>
+
+  <section class="panel" id="s3" hidden>
+    <h1>Your health report</h1>
+    <div class="who" id="who"></div>
+    <div id="triage"></div>
+    <h2>Most likely conditions</h2>
+    <div id="conds"></div>
+    <details id="why"></details>
+    <p class="fine">Educational project, not a medical diagnosis. The model uses a small hand-made probability table, not real patient data. If you feel seriously unwell, see a doctor.</p>
+    <div class="bar"><button class="btn" id="b3" type="button">Edit symptoms</button><span><button class="btn" id="pr" type="button">Download PDF report</button> <button class="btn pri" id="re" type="button">Start over</button></span></div>
+  </section>
+<section class="panel" id="dm" hidden>
+    <h1>Diabetes risk check</h1>
+    <p class="lead">No symptoms needed. Enter numbers you already have, for example from a recent health check-up.</p>
+    <div class="grid">
+      <label>Age (years)<input id="d_age" type="number" min="18" max="90" placeholder="e.g. 45"></label>
+      <label>BMI<input id="d_bmi" type="number" min="14" max="60" step="0.1" placeholder="e.g. 28.5"></label>
+      <label>Fasting glucose (mg/dL)<input id="d_glucose" type="number" min="50" max="400" placeholder="e.g. 105"></label>
+      <label>Systolic BP (mmHg)<input id="d_bp" type="number" min="80" max="220" placeholder="e.g. 125"></label>
+      <label>Parent or sibling with diabetes?<select id="d_family"><option value="0">No</option><option value="1">Yes</option></select></label>
+      <label>Exercise 30 min on most days?<select id="d_active"><option value="1">Yes</option><option value="0">No</option></select></label>
+    </div>
+    <p class="err" id="d_err" role="alert"></p>
+    <div class="bar"><span></span><button class="btn pri" id="d_go" type="button">Check my risk</button></div>
+    <div id="d_out" style="margin-top:20px"></div>
+    <p class="fine">Learning project. The model is trained on practice data, not real patients. Only a blood test (fasting glucose or HbA1c) can confirm diabetes.</p>
+  </section>
+  <div class="metrics" aria-label="Project metrics">
+    <div><b id="m_s">0</b>Screenings completed</div><div><b id="m_f">0</b>Flagged for a doctor</div>
+    <div><b id="m_c">0</b>Confirmed by clinician</div><div><b id="m_r">–</b>Flag-to-clinician confirmation</div>
+  </div>
+</main>
+
+<script>
+// ---- 1. Data: P(symptom | disease), written by hand for teaching ----
+const SYMPTOMS = {
+  "Fever and general": {fever:"Fever",highfever:"High fever (above 39°C)",chills:"Chills / shivering",fatigue:"Tiredness",bodyache:"Body ache",appetite:"Loss of appetite",pale:"Pale skin"},
+  "Head and throat": {headache:"Headache",photo:"Light hurts my eyes",eyepain:"Pain behind the eyes",sore:"Sore throat",runny:"Runny nose",sneeze:"Sneezing",itcheyes:"Itchy eyes",smell:"Loss of smell or taste",dizzy:"Dizziness"},
+  "Chest and breathing": {cough:"Cough",breath:"Short of breath",chest:"Chest pain"},
+  "Stomach and body": {nausea:"Nausea",vomit:"Vomiting",diarrhea:"Loose motions",abdpain:"Stomach pain",burning:"Burning while urinating",rash:"Skin rash",jointpain:"Joint pain"}
+};
+const LABEL = {}; Object.values(SYMPTOMS).forEach(g => Object.assign(LABEL, g));
+
+const DISEASES = {
+  "Common cold": {prior:.25, tip:"Usually settles in about a week. Rest, fluids, warm salt-water gargles.", p:{fever:.3,cough:.6,sore:.6,runny:.85,sneeze:.7,headache:.3,bodyache:.3,fatigue:.4,chills:.1}},
+  "Influenza (flu)": {prior:.12, tip:"Rest, fluids and paracetamol for fever. See a doctor if breathing gets harder.", p:{fever:.85,highfever:.4,cough:.75,sore:.4,runny:.4,headache:.6,bodyache:.85,fatigue:.85,chills:.7,nausea:.15,appetite:.5}},
+  "COVID-19": {prior:.10, tip:"A test confirms it. Stay home, wear a mask around others, watch your breathing.", p:{fever:.6,cough:.65,sore:.35,headache:.45,bodyache:.5,fatigue:.7,smell:.5,breath:.2,chills:.35,diarrhea:.1,runny:.3}},
+  "Dengue": {prior:.06, tip:"Needs a blood test (NS1 / platelet count). Drink plenty of fluids and avoid aspirin or ibuprofen.", p:{fever:.95,highfever:.7,headache:.75,bodyache:.8,jointpain:.75,eyepain:.6,rash:.4,nausea:.5,vomit:.35,fatigue:.7,chills:.3,abdpain:.2}},
+  "Malaria": {prior:.05, tip:"Needs a blood smear or rapid test soon. Fever that comes in cycles with chills is a clue.", p:{fever:.95,highfever:.6,chills:.9,headache:.6,bodyache:.6,fatigue:.7,nausea:.4,vomit:.3,jointpain:.3}},
+  "Typhoid": {prior:.04, tip:"Needs a blood culture or Widal test. Drink only safe water and see a doctor.", p:{fever:.9,highfever:.5,headache:.6,abdpain:.6,fatigue:.7,appetite:.7,diarrhea:.3,nausea:.4,rash:.15,bodyache:.4}},
+  "Migraine": {prior:.10, tip:"Rest in a dark, quiet room and drink water. See a doctor if attacks are frequent.", p:{headache:.98,photo:.8,nausea:.6,vomit:.3,dizzy:.3,eyepain:.25,fatigue:.3}},
+  "Stomach infection": {prior:.12, tip:"Take ORS and fluids often. See a doctor if there is blood in stool or no urine for 8 hours.", p:{nausea:.8,vomit:.7,diarrhea:.9,abdpain:.8,fever:.35,fatigue:.4,headache:.2,bodyache:.2,appetite:.6}},
+  "Allergic rhinitis": {prior:.15, tip:"Avoid dust and pollen triggers. An antihistamine from a pharmacist may help.", p:{sneeze:.9,runny:.85,itcheyes:.8,cough:.2,headache:.2,sore:.2,fatigue:.15}},
+  "Pneumonia": {prior:.03, tip:"Needs a doctor and usually a chest X-ray. Do not wait if breathing is difficult.", p:{fever:.8,highfever:.35,cough:.9,breath:.75,chest:.55,fatigue:.6,chills:.5,bodyache:.3}},
+  "Urinary tract infection": {prior:.06, tip:"Drink water and see a doctor for a urine test; it usually needs antibiotics.", p:{burning:.95,abdpain:.4,fever:.25,nausea:.1,fatigue:.2}},
+  "Anaemia": {prior:.05, tip:"A blood test (haemoglobin) will confirm. Iron-rich food helps, but get it checked.", p:{fatigue:.9,dizzy:.7,pale:.6,breath:.3,headache:.3,appetite:.2}}
+};
+const FLOOR = 0.02; // chance of a symptom if the disease table doesn't list it (smoothing)
+
+// ---- 2. The model: Naive Bayes ----
+function predict(sel){
+  const rows = Object.entries(DISEASES).map(([name,d]) => {
+    let lp = Math.log(d.prior); const parts = [];
+    sel.forEach(s => { const p = d.p[s] ?? FLOOR; lp += Math.log(p); parts.push([s,p]); });
+    return {name, lp, parts, tip:d.tip};
+  });
+  const m = Math.max(...rows.map(r => r.lp));
+  const sum = rows.reduce((a,r) => a + Math.exp(r.lp - m), 0);
+  rows.forEach(r => r.prob = Math.exp(r.lp - m) / sum);
+  return rows.sort((a,b) => b.prob - a.prob);
+}
+
+
+// ---- UI ----
+const $ = id => document.getElementById(id);
+const sel = new Set();
+const URGENT = new Set(["Dengue","Malaria","Typhoid","Pneumonia","COVID-19","Urinary tract infection","Anaemia"]);
+function go(n){
+  [1,2,3].forEach(i => $("s"+i).hidden = i !== n);
+  document.querySelectorAll("#steps li").forEach((li,i) => li.className = i+1 === n ? "on" : i+1 < n ? "done" : "");
+  if(n === 3){ try{ report(); }catch(e){ $("conds").textContent = "Report could not be built: " + e.message; } }
+  window.scrollTo({top:0});
+}
+function drawChips(){
+  const f = $("q").value.trim().toLowerCase(); $("groups").innerHTML = "";
+  for(const [g, items] of Object.entries(SYMPTOMS)){
+    const shown = Object.entries(items).filter(([,l]) => l.toLowerCase().includes(f));
+    if(!shown.length) continue;
+    const d = document.createElement("div"); d.innerHTML = `<div class="gh">${g}</div><div class="chips"></div>`;
+    shown.forEach(([id,l]) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = l;
+      b.setAttribute("aria-pressed", sel.has(id));
+      b.onclick = () => { sel.has(id) ? sel.delete(id) : sel.add(id); b.setAttribute("aria-pressed", sel.has(id)); drawTray(); };
+      d.lastChild.appendChild(b);
+    });
+    $("groups").appendChild(d);
+  }
+  if(!$("groups").children.length) $("groups").innerHTML = '<p class="lead" style="margin-top:14px">No symptom matches that word. Try a different one.</p>';
+}
+function drawTray(){
+  $("count").textContent = sel.size; $("n2").disabled = sel.size < 2;
+  $("hint").textContent = sel.size < 2 ? "Select " + (2 - sel.size) + " more symptom" + (sel.size ? "" : "s") + " to unlock your report." : "Ready. Tap 'See my report'.";
+  $("tray").innerHTML = sel.size ? "" : '<span class="fine" style="margin:0">Nothing selected yet.</span>';
+  sel.forEach(id => {
+    const t = document.createElement("button"); t.type = "button"; t.className = "tag"; t.textContent = LABEL[id] + " ✕";
+    t.onclick = () => { sel.delete(id); drawChips(); drawTray(); }; $("tray").appendChild(t);
+  });
+}
+function report(){
+  const s = [...sel], age = +$("age").value, dur = +$("dur").value, r = predict(s), top = r[0];
+  const nm = $("name").value.trim();
+  $("who").innerHTML = `<span>Patient: <b></b></span><span>Age: <b>${age}</b></span><span>Sex: <b>${$("sex").value}</b></span><span>Date: <b>${new Date().toLocaleDateString()}</b></span>`;
+  $("who").querySelector("b").textContent = nm || "Not given";
+  const fever = s.includes("fever") || s.includes("highfever");
+  let lv = "ok", title = "Home care is likely fine", msg = "Rest, drink fluids, and watch your symptoms. See a doctor if they get worse or last more than a week.", ic = "🏠";
+  if(s.includes("chest") || s.includes("breath")){ lv = "bad"; ic = "🚨"; title = "Get medical help today"; msg = "Chest pain or trouble breathing can be serious. Visit a hospital or call your local emergency number."; }
+  else if((URGENT.has(top.name) && top.prob > .3) || (fever && dur >= 6) || (fever && (age < 5 || age > 60))){ lv = "mid"; ic = "🩺"; title = "See a doctor within 1–2 days"; msg = "Your pattern needs a proper check-up and possibly a blood or urine test."; }
+  $("triage").innerHTML = `<div class="triage t-${lv}"><span class="ic">${ic}</span><div><h3>${title}</h3><p>${msg}</p></div></div>`;
+  const match = top.prob >= .6 ? "Strong match" : top.prob >= .35 ? "Moderate match" : "Weak match: many fit";
+  $("conds").innerHTML = r.slice(0,4).map((x,i) => { const pc = Math.round(x.prob*100);
+    return `<div class="cond ${i?"":"first"}"><div class="ct"><span class="cn">${x.name}${i?"":`<span class="badge">${match}</span>`}</span><span class="cp">${pc<1?"<1":pc}%</span></div><div class="tr"><i style="width:${Math.max(pc,2)}%"></i></div>${i?"":`<p>${x.tip}</p>`}</div>`; }).join("");
+  LASTR = {kind:"Symptom check report", level:lv, title, msg, head:"Most likely conditions",
+    who:["Patient: " + (nm || "Not given"), "Age: " + age, "Sex: " + $("sex").value, "Date: " + new Date().toLocaleDateString()],
+    items:r.slice(0,4).map((x,i) => ({name:x.name, pct:Math.round(x.prob*100), note:i ? "" : x.tip})),
+    extra:["Symptoms reported: " + s.map(k => LABEL[k]).join(", "), "Symptoms started: " + $("dur").selectedOptions[0].textContent]};
+  $("why").innerHTML = `<summary>How the AI got this (for your viva)</summary><p class="fine">Naive Bayes: start with how common ${top.name} is (prior ${(DISEASES[top.name].prior*100).toFixed(0)}%), then multiply by how often each chosen symptom appears in it. Scores of all conditions are then scaled to add up to 100%.</p><table><tr><th>Symptom</th><th>P(symptom | ${top.name})</th></tr>${top.parts.map(([k,p]) => `<tr><td>${LABEL[k]}</td><td>${p}${p===FLOOR?" (not listed)":""}</td></tr>`).join("")}</table>`;
+}
+$("n1").onclick = () => {
+  const a = +$("age").value;
+  if(!$("age").value || a < 0 || a > 110){ $("err").textContent = "Please enter a valid age between 0 and 110."; $("age").focus(); return; }
+  $("err").textContent = ""; go(2);
+};
+$("b2").onclick = () => go(1); $("n2").onclick = () => go(3); $("b3").onclick = () => go(2);
+$("q").oninput = drawChips; $("pr").onclick = () => savePDF(LASTR, "sehatcheck-report.pdf");
+$("re").onclick = () => { sel.clear(); $("q").value = ""; $("name").value = ""; $("age").value = ""; drawChips(); drawTray(); go(1); };
+drawChips(); drawTray();
+
+// ---- Module 2: diabetes risk (logistic regression trained in python/train_diabetes.py) ----
+const DM = {"features": ["age", "bmi", "glucose", "bp", "family", "active"], "labels": {"age": "Age", "bmi": "BMI", "glucose": "Fasting glucose", "bp": "Systolic BP", "family": "Family history", "active": "Physical activity"}, "mean": [41.785, 27.024166666666666, 91.78208333333333, 118.02291666666666, 0.2504166666666667, 0.5029166666666667], "scale": [13.41511989013392, 4.8786805906469795, 13.66578802434711, 12.937280426209709, 0.433252997360921, 0.4999914929831862], "coef": [0.519917863347408, 0.4688958217947887, 0.7327801874498957, 0.16277640905274673, 0.33704000437026715, -0.2995109150172131], "intercept": -1.37683670287087};
+const M = {screen:0, flag:0, conf:0};
+try{ Object.assign(M, JSON.parse(localStorage.getItem("sc_metrics") || "{}")); }catch(e){}
+function drawM(){ $("m_s").textContent = M.screen; $("m_f").textContent = M.flag; $("m_c").textContent = M.conf; $("m_r").textContent = M.flag ? Math.round(100*M.conf/M.flag) + "%" : "–"; }
+function saveM(){ try{ localStorage.setItem("sc_metrics", JSON.stringify(M)); }catch(e){} drawM(); }
+let lastStep = 1; const _go = go, _report = report;
+go = n => { lastStep = n; _go(n); };
+report = () => { _report(); M.screen++; saveM(); };
+function tab(n){
+  $("t1").className = "tab" + (n === 1 ? " on" : ""); $("t2").className = "tab" + (n === 2 ? " on" : "");
+  $("dm").hidden = n !== 2; $("steps").hidden = n !== 1;
+  if(n === 1) _go(lastStep); else [1,2,3].forEach(i => $("s"+i).hidden = true);
+}
+$("t1").onclick = () => tab(1); $("t2").onclick = () => tab(2);
+$("d_go").onclick = () => {
+  const v = DM.features.map(f => $("d_"+f).value === "" ? NaN : +$("d_"+f).value);
+  const bad = DM.features.find((f,i) => isNaN(v[i]) || v[i] < +($("d_"+f).min || -1e9) || v[i] > +($("d_"+f).max || 1e9));
+  if(bad){ $("d_err").textContent = "Please enter a valid value for: " + DM.labels[bad] + "."; $("d_"+bad).focus(); return; }
+  $("d_err").textContent = "";
+  const c = v.map((x,i) => (x - DM.mean[i]) / DM.scale[i] * DM.coef[i]);
+  const p = 1 / (1 + Math.exp(-(c.reduce((a,b) => a+b, 0) + DM.intercept))), pc = Math.round(p*100);
+  const lv = p < .2 ? ["ok","🏠","Low risk","Keep up healthy habits and get a routine check-up once a year."]
+    : p < .5 ? ["mid","🩺","Moderate risk","Ask a doctor for a fasting glucose or HbA1c test in the next few weeks."]
+    : ["bad","🚨","High risk","Please see a doctor soon for an HbA1c and fasting glucose test."];
+  const why = DM.features.map((f,i) => [f,c[i],v[i]]).filter(x => x[1] > .15).sort((a,b) => b[1]-a[1]).slice(0,3)
+    .map(x => DM.labels[x[0]] + " (" + (x[0] === "family" || x[0] === "active" ? (x[2] ? "yes" : "no") : x[2]) + ")").join(", ");
+  $("d_out").innerHTML = `<div class="triage t-${lv[0]}"><span class="ic">${lv[1]}</span><div><h3>${lv[2]}</h3><p>${lv[3]}</p></div></div>
+    <div class="big">${pc}%</div><div class="tr"><i style="width:${Math.max(pc,2)}%"></i></div>
+    <button class="btn pri" id="d_pdf" type="button">Download PDF report</button>
+    <p class="fine">Estimated chance, from the model. ${why ? "What pushed it up: <b>" + why + "</b>." : "No single factor stands out."}</p>
+    ${p >= .2 ? '<p class="fine">After seeing a doctor, record the result:</p><button class="btn" id="d_yes" type="button">Doctor confirmed</button> <button class="btn" id="d_no" type="button">Not confirmed</button>' : ""}`;
+  LASTD = {kind:"Diabetes risk report", level:lv[0], title:lv[2], msg:lv[3], head:"Risk estimate",
+    who:["Date: " + new Date().toLocaleDateString(), "Module: Diabetes risk check"],
+    items:[{name:"Estimated diabetes risk", pct:pc, note:why ? "What pushed it up: " + why : ""}],
+    extra:["Inputs: Age " + v[0] + ", BMI " + v[1] + ", fasting glucose " + v[2] + " mg/dL, systolic BP " + v[3] + " mmHg, family history " + (v[4] ? "yes" : "no") + ", exercise " + (v[5] ? "yes" : "no")]};
+  $("d_pdf").onclick = () => savePDF(LASTD, "diabetes-risk-report.pdf");
+  M.screen++; if(p >= .2) M.flag++; saveM();
+  const done = ok => { if(ok) M.conf++; saveM(); $("d_yes").remove(); $("d_no").remove(); };
+  if($("d_yes")){ $("d_yes").onclick = () => done(true); $("d_no").onclick = () => done(false); }
+};
+drawM();
+
+// ---- PDF report (jsPDF from cdnjs) ----
+let LASTR, LASTD;
+function makePDF(R){
+  const doc = new window.jspdf.jsPDF({unit:"mm", format:"a4"}), W = 210, m = 16;
+  const col = {ok:[21,127,79], mid:[138,90,0], bad:[179,38,30]}[R.level], bg = {ok:[228,245,236], mid:[255,242,214], bad:[253,231,229]}[R.level];
+  const ink = () => doc.setTextColor(20,33,61);
+  doc.setFillColor(20,86,196); doc.rect(0,0,W,26,"F");
+  doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(18); doc.text("SehatCheck", m, 13);
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.text(R.kind, m, 20);
+  let y = 38; ink(); doc.text(doc.splitTextToSize(R.who.join("   |   "), W-2*m), m, y); y += 7;
+  doc.setDrawColor(220,227,239); doc.line(m, y, W-m, y); y += 8;
+  const ml = doc.splitTextToSize(R.msg, W-2*m-10), h = 14 + ml.length*5;
+  doc.setFillColor(...bg); doc.roundedRect(m, y, W-2*m, h, 2, 2, "F");
+  doc.setTextColor(...col); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text(R.title, m+5, y+8);
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.text(ml, m+5, y+14); y += h + 10;
+  ink(); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text(R.head, m, y); y += 8;
+  R.items.forEach(it => {
+    const nl = it.note ? doc.splitTextToSize(it.note, W-2*m) : [];
+    if(y + 16 + nl.length*5 > 270){ doc.addPage(); y = 20; }
+    ink(); doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text(it.name, m, y); doc.text(it.pct + "%", W-m, y, {align:"right"});
+    doc.setFillColor(234,241,253); doc.roundedRect(m, y+2.5, W-2*m, 3, 1.5, 1.5, "F");
+    if(it.pct >= 1){ doc.setFillColor(20,86,196); doc.roundedRect(m, y+2.5, Math.max(3, (W-2*m)*it.pct/100), 3, 1.5, 1.5, "F"); }
+    y += 11; doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(94,107,133);
+    if(nl.length){ doc.text(nl, m, y); y += nl.length*5 + 2; } y += 3;
+  });
+  ink(); doc.setFontSize(10);
+  R.extra.forEach(t => { const l = doc.splitTextToSize(t, W-2*m); if(y + l.length*5 > 270){ doc.addPage(); y = 20; } doc.text(l, m, y); y += l.length*5 + 3; });
+  const n = doc.getNumberOfPages();
+  for(let i = 1; i <= n; i++){
+    doc.setPage(i); doc.setFontSize(8); doc.setTextColor(94,107,133);
+    doc.text(doc.splitTextToSize("Educational project, not a medical diagnosis. The model uses practice data, not real patients. If you feel seriously unwell, see a doctor.", W-2*m-28), m, 281);
+    doc.text("Page " + i + " of " + n, W-m, 281, {align:"right"});
+  }
+  return doc;
+}
+async function savePDF(R, fname){
+  if(!R) return;
+  try{
+    if(!(window.jspdf && window.jspdf.jsPDF)) throw new Error("PDF library not loaded");
+    const blob = makePDF(R).output("blob");
+    const dl = await claude.use("downloads");
+    if(!dl) throw new Error("downloads unavailable");
+    await dl.save({filename:fname, data:blob});
+  }catch(e){
+    if(e && e.code === "declined") return;
+    alert("Could not save the PDF here (" + (e && e.message || "error") + "). Open this page in a normal browser tab and try again, or take a screenshot.");
+  }
+}
+</script>
+</body>
+</html>
